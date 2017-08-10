@@ -9,6 +9,6 @@
 
 define('HOST','127.0.0.1');
 define('PORT','3307');
-define('DBNAME','pet_shop');
+define('DBNAME','220v');
 define('USER','stan');
 define('PASSWORD','0000');

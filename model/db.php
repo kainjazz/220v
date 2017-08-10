@@ -47,7 +47,7 @@ class DB {
             }
             return $arr;
         }
-        return null;
+        return false;
     }
 
     public function simpleQuery($query) {

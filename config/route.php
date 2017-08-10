@@ -12,16 +12,12 @@ $actualRoute = $_SERVER["REQUEST_URI"];
 $pattern = "/api/";
 $matches = [];
 $api = preg_match( "/\/api\/[\w]+/",$actualRoute);
-$api ? preg_match_all("/\/api\/([\w]+)[\/]?/",$actualRoute,$matches) : null;
-$getArray = $_GET;
+$api ? preg_match_all("/\/api\/([\w]+)[\/]?([\d\w]+)?[\/]?/",$actualRoute,$matches) : null;
 
 if($api) {
     $REST = new REST();
-    echo $REST->verb;
-    var_dump($REST->getFormData($REST->verb));
-    echo "<br/>";
+    $requestParams = $REST->getFormData($_SERVER['REQUEST_METHOD']);
 }
-
 
 $allRouts = [
     '/' => 'view/index.php',
@@ -30,8 +26,10 @@ $allRouts = [
     'api' => [
         'controller' => 'api',
         'params' =>[
-            'method' => isset($matches[1][0]) ? $matches[1][0] : null,
-            'getParams' => $getArray
+            'firstUrlParam' => isset($matches[1][0]) ? $matches[1][0] : null,
+            'requestParams' => isset($requestParams) ? $requestParams : null,
+            'verb' => isset($REST->verb) ? $REST->verb : null,
+            'secondUrlParam' => isset($matches[2][0]) ? $matches[2][0] : null
         ]
     ]
 ];
