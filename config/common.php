@@ -10,5 +10,17 @@
 define('HOST','127.0.0.1');
 define('PORT','3307');
 define('DBNAME','220v');
-define('USER','stan');
-define('PASSWORD','0000');
+define('USER','root');
+define('PASSWORD','');
+
+/**
+ * Class app
+ * Здесь в перспективе должно быть приложение
+ */
+class app {
+    public $currencyArray = [
+                            'USD',
+                            'KZT',
+                            'BYN',
+                            ];
+}
