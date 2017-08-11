@@ -14,11 +14,15 @@ class api extends root
     protected $requestParams = null;
     protected $secondUrlParam = null;
     protected $firstUrlParam = null;
+    protected $currency = null;
 
     public function __construct($params=null)
     {
         require (__DIR__ . '/../model/db.php');
+        require (__DIR__ . '/../model/currency.php');
+        $this->currency = new \model\currency();
         $this->db = model\DB::getInstance();
+
         if(!is_null($params)) {
             $verb = $params['verb'];
             $this->firstUrlParam = $params['firstUrlParam'];
@@ -36,7 +40,7 @@ class api extends root
 
     public function GET() {
         $vendorArray = [];
-        if(!is_null($this->secondUrlParam) && $this->secondUrlParam != '') {
+        if(!is_null($this->secondUrlParam) && $this->secondUrlParam != '' && is_numeric($this->secondUrlParam)) {
             $try = $this->db->dbQueryArryReturn("SELECT `vendor_id` as vendor, count(*) > $this->secondUrlParam AS cnt FROM `item` GROUP BY `vendor_id`");
             if($try) {
                 foreach ($try as $value) {
@@ -59,8 +63,17 @@ class api extends root
         } else {
             $try = $this->db->dbQueryArryReturn("SELECT * FROM `item` WHERE `vendor_id`='$this->firstUrlParam'");
             if($try) {
-                $this->status = "ok";
+                if(!is_numeric($this->secondUrlParam)) {
+                    $mark = $this->secondUrlParam . 'RUB';
+                    if(isset($this->currency->currencyArray[$mark])) {
+                        foreach ($try as $key => $value) {
+                            $value->price_retail = $value->price_retail / $this->currency->currencyArray[$mark]->Rate;
+                        }
+                    }
+                }
+                $this->status = isset($this->currency->currencyArray[$mark]) ? "ok" : 'error';
                 $this->data = $try;
+                $this->data[] = isset($this->currency->currencyArray[$mark]) ? (object)["Валюта" => $this->secondUrlParam . " /по умолчанию рубль RUB"] : 'Ошибка указания валюты, по умолчанию Рубль / RUB';
                 $this->message = "Отобраны товары брэнда $this->firstUrlParam";
                 $this->renderJson();
             } else {
