@@ -7,11 +7,11 @@
  * Тут только глабальные настройки
  */
 
-define('HOST','127.0.0.1');
+define('HOST','127.0.0.2');
 define('PORT','3307');
 define('DBNAME','220v');
 define('USER','root');
-define('PASSWORD','');
+define('PASSWORD','proverka');
 
 /**
  * Class app
